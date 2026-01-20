@@ -1,0 +1,19 @@
+{
+  "name": "@purpleowl-io/tracepack",
+  "version": "0.1.0",
+  "description": "Async-safe contextual logger for Node.js with zero refactor",
+  "main": "logger.js",
+  "type": "module",
+  "keywords": [
+    "node",
+    "logging",
+    "async",
+    "express",
+    "transaction-id",
+    "context",
+    "console.log",
+    "observability"
+  ],
+  "author": "PurpleOwl",
+  "license": "MIT"
+}
