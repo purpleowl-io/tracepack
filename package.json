@@ -1,6 +1,6 @@
 {
   "name": "@purpleowl-io/tracepack",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Async-safe contextual logging for Node.js with zero refactor",
   "type": "module",
   "main": "./logger.js",
