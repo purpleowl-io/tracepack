@@ -1,5 +1,7 @@
 # Contextual Logger for Node.js
 
+By [PurpleOwl](https://purpleowl.io)
+
 A **drop-in `console.log` replacement** that automatically attaches **user IDs, transaction IDs, and async context** to every log statement — across `async/await`, promises, background jobs, and Express requests — with two lines of setup.
 
 Built for real production systems, not tutorials.
@@ -317,4 +319,4 @@ This logger is ideal if you:
 
 ## License
 
-MIT
+MIT - [PurpleOwl](https://purpleowl.io)

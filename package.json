@@ -1,19 +1,39 @@
 {
   "name": "@purpleowl-io/tracepack",
   "version": "0.1.0",
-  "description": "Async-safe contextual logger for Node.js with zero refactor",
-  "main": "logger.js",
+  "description": "Async-safe contextual logging for Node.js with zero refactor",
   "type": "module",
+  "main": "./logger.js",
+  "exports": {
+    ".": "./logger.js"
+  },
   "keywords": [
     "node",
+    "nodejs",
     "logging",
+    "logger",
     "async",
+    "asynclocalstorage",
     "express",
+    "middleware",
+    "transaction",
     "transaction-id",
+    "request-id",
     "context",
-    "console.log",
-    "observability"
+    "observability",
+    "console"
   ],
   "author": "PurpleOwl",
-  "license": "MIT"
+  "license": "MIT",
+  "homepage": "https://purpleowl.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/purpleowl-io/tracepack.git"
+  },
+  "bugs": {
+    "url": "https://github.com/purpleowl-io/tracepack/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }
