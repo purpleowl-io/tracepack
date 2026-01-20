@@ -72,7 +72,7 @@ This logger:
 ## Installation
 
 ```bash
-npm install contextual-logger
+npm i @purpleowl-io/tracepack
 ```
 
 ---
@@ -111,6 +111,8 @@ app.use('/api', routes);
 ```
 
 That's it.
+
+More examples: [README-EXAMPLES.md](README-EXAMPLES.md)
 
 ---
 
