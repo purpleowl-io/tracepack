@@ -197,7 +197,46 @@ app.use(loggerMiddleware({ userIdPath: 'auth.userId' }));
 
 // Custom transaction ID header (for distributed tracing)
 app.use(loggerMiddleware({ txIdHeader: 'x-request-id' }));
+
+// Combine options
+app.use(loggerMiddleware({ 
+  userIdPath: 'auth.sub',
+  txIdHeader: 'x-request-id'
+}));
 ```
+
+### Common Auth Provider Mappings
+
+| Provider / Library | userIdPath | Notes |
+|--------------------|------------|-------|
+| **Passport.js** | `user.id` (default) | Standard Passport serialization |
+| **Auth0** | `auth.sub` | OIDC subject claim |
+| **Firebase Admin** | `user.uid` | Firebase Auth decoded token |
+| **AWS Cognito** | `user.sub` | Cognito JWT sub claim |
+| **Google IAP** | `user.id` | Identity-Aware Proxy |
+| **Azure AD / Entra** | `user.oid` | Object ID from JWT |
+| **Clerk** | `auth.userId` | Clerk middleware |
+| **Supabase** | `user.id` | Supabase Auth |
+| **Keycloak** | `user.sub` | Keycloak JWT |
+| **NextAuth / Auth.js** | `user.id` | Session user |
+| **express-jwt** | `auth.sub` | Decoded JWT payload |
+| **Custom JWT** | `user.sub` or `auth.sub` | Depends on your setup |
+
+
+### Common Transaction ID Headers
+
+| System | txIdHeader | Notes |
+|--------|------------|-------|
+| **Default** | `x-transaction-id` | This logger's default |
+| **AWS ALB/ELB** | `x-amzn-trace-id` | AWS load balancer trace |
+| **Cloudflare** | `cf-ray` | Cloudflare Ray ID |
+| **GCP Cloud Run** | `x-cloud-trace-context` | GCP trace header |
+| **Azure** | `x-ms-request-id` | Azure request ID |
+| **OpenTelemetry** | `traceparent` | W3C Trace Context |
+| **Nginx** | `x-request-id` | Common Nginx config |
+| **Kong / API Gateways** | `x-request-id` | API gateway standard |
+| **Datadog** | `x-datadog-trace-id` | Datadog APM |
+
 
 ---
 
