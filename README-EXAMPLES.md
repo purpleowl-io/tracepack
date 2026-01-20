@@ -1,3 +1,4 @@
+> Examples for **@purpleowl-io/tracepack** — async-safe contextual logging for Node.js.
 # Log Output Destinations
 
 This logger outputs **newline-delimited JSON (NDJSON)**, making it compatible with virtually any log aggregation system.

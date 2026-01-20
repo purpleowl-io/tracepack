@@ -1,3 +1,7 @@
+![npm version](https://img.shields.io/npm/v/@purpleowl-io/tracepack)
+![npm downloads](https://img.shields.io/npm/dm/@purpleowl-io/tracepack)
+![license](https://img.shields.io/npm/l/@purpleowl-io/tracepack)
+![node version](https://img.shields.io/node/v/@purpleowl-io/tracepack)
 # Contextual Logger for Node.js
 
 By [PurpleOwl](https://purpleowl.io)
