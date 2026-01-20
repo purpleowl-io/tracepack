@@ -87,7 +87,7 @@ npm i @purpleowl-io/tracepack
 
 ```javascript
 // app.js — at the very top, before other imports
-import { replaceConsole, loggerMiddleware } from './utils/logger.js';
+import { replaceConsole, loggerMiddleware } from '@purpleowl-io/tracepack';
 
 replaceConsole();  // defaults: level 'info', output to console
 
@@ -245,7 +245,7 @@ app.use(loggerMiddleware({
 When you need richer context mid-request:
 
 ```javascript
-import { log } from './utils/logger.js';
+import { log } from '@purpleowl-io/tracepack';
 
 app.post('/orders', async (req, res) => {
   log.addContext({ orderId: req.body.id });
@@ -267,7 +267,7 @@ This is especially useful for order processing, billing workflows, and long-runn
 For cron jobs, workers, or scripts outside HTTP requests:
 
 ```javascript
-import { withContext } from './utils/logger.js';
+import { withContext } from '@purpleowl-io/tracepack';
 
 async function nightlyJob() {
   await withContext({ userId: 'system', txId: 'nightly-' + Date.now() }, async () => {
@@ -285,7 +285,7 @@ async function nightlyJob() {
 If work continues after the request ends:
 
 ```javascript
-import { captureContext, runWithCapturedContext } from './utils/logger.js';
+import { captureContext, runWithCapturedContext } from '@purpleowl-io/tracepack';
 
 app.post('/orders', (req, res) => {
   const ctx = captureContext();  // Grab context before request ends
