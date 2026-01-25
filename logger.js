@@ -7,7 +7,7 @@
 
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { randomUUID } from 'node:crypto';
-import { appendFileSync, mkdirSync } from 'node:fs';
+import { createWriteStream, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
 // The "invisible backpack" that follows async execution
@@ -15,6 +15,9 @@ const asyncContext = new AsyncLocalStorage();
 
 // Log level configuration
 const LOG_LEVELS = { debug: 0, info: 1, warn: 2, error: 3, none: 4 };
+
+// Reserved fields that custom context cannot overwrite
+const RESERVED_FIELDS = new Set(['ts', 'level', 'msg', 'userId', 'txId']);
 
 // Store original console methods before any replacement
 const originalConsole = {
@@ -28,7 +31,23 @@ const originalConsole = {
 // Runtime configuration (set by replaceConsole)
 let currentLevel = LOG_LEVELS.info;
 let outputMode = 'console';
-let logFilePath = null;
+let logFileStream = null;
+
+/**
+ * Safe JSON stringify that handles circular references
+ */
+function safeStringify(obj, maxDepth = 10) {
+  const seen = new WeakSet();
+  return JSON.stringify(obj, function(key, value) {
+    if (typeof value === 'object' && value !== null) {
+      if (seen.has(value)) {
+        return '[Circular]';
+      }
+      seen.add(value);
+    }
+    return value;
+  });
+}
 
 /**
  * Internal: formats and outputs a log entry
@@ -47,16 +66,31 @@ function emit(level, message, data = {}) {
     msg: message
   };
 
-  // Add any custom context fields that were set
+  // Add custom context fields, filtering out reserved keys to prevent spoofing
   if (ctx.custom) {
-    Object.assign(entry, ctx.custom);
+    for (const [key, value] of Object.entries(ctx.custom)) {
+      if (!RESERVED_FIELDS.has(key)) {
+        entry[key] = value;
+      }
+    }
   }
 
-  const output = JSON.stringify(entry);
+  let output;
+  try {
+    output = safeStringify(entry);
+  } catch (err) {
+    // Fallback if stringify still fails
+    output = JSON.stringify({
+      ts: entry.ts,
+      level: 'error',
+      msg: 'Failed to serialize log entry',
+      originalMsg: String(message)
+    });
+  }
   
-  // Write to file if configured
-  if (logFilePath && (outputMode === 'file' || outputMode === 'both')) {
-    appendFileSync(logFilePath, output + '\n');
+  // Write to file if configured (async stream)
+  if (logFileStream && (outputMode === 'file' || outputMode === 'both')) {
+    logFileStream.write(output + '\n');
   }
   
   // Write to console if configured
@@ -182,11 +216,12 @@ export function replaceConsole(options = {}) {
   // Set configuration
   currentLevel = LOG_LEVELS[level] ?? LOG_LEVELS.info;
   outputMode = output;
-  logFilePath = filePath ? resolve(filePath) : null;
 
-  // Ensure log directory exists if file output is enabled
-  if (logFilePath && (outputMode === 'file' || outputMode === 'both')) {
-    mkdirSync(dirname(logFilePath), { recursive: true });
+  // Ensure log directory exists and create async stream if file output is enabled
+  if (filePath && (output === 'file' || output === 'both')) {
+    const resolvedPath = resolve(filePath);
+    mkdirSync(dirname(resolvedPath), { recursive: true });
+    logFileStream = createWriteStream(resolvedPath, { flags: 'a' });
   }
 
   console.log = (...args) => {
