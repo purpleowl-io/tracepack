@@ -19,6 +19,9 @@ const LOG_LEVELS = { debug: 0, info: 1, warn: 2, error: 3, none: 4 };
 // Reserved fields that custom context cannot overwrite
 const RESERVED_FIELDS = new Set(['ts', 'level', 'msg', 'userId', 'txId']);
 
+// Transaction ID validation: alphanumeric, dashes, underscores, max 128 chars
+const VALID_TX_ID = /^[a-zA-Z0-9_-]{1,128}$/;
+
 // Store original console methods before any replacement
 const originalConsole = {
   log: console.log,
@@ -149,8 +152,9 @@ export function loggerMiddleware(options = {}) {
       req
     ) ?? null;
 
-    // Use existing transaction ID from header, or generate new one
-    const txId = req.get(txIdHeader) || generateTxId();
+    // Use existing transaction ID from header if valid, otherwise generate new one
+    const clientTxId = req.get(txIdHeader);
+    const txId = (clientTxId && VALID_TX_ID.test(clientTxId)) ? clientTxId : generateTxId();
 
     // Set response header so clients can correlate
     res.set('x-transaction-id', txId);
